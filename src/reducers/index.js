@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux'
-import { reject, omit, append, update } from 'ramda'
+import { reject, omit, prepend, update } from 'ramda'
 import {
   CREATE_BURGER,
   DELETE_BURGER,
-  ADD_INGREDIENT_TO_BURGER,
-  REMOVE_INGREDIENT_FROM_BURGER,
+  INCREMENT_INGREDIENT_OF_BURGER,
+  DECREMENT_INGREDIENT_OF_BURGER,
   CREATE_INGREDIENT,
   DELETE_INGREDIENT
 } from '../actions/index'
@@ -78,7 +78,8 @@ const burgerReducer = (state = initialState, action) => {
     name // shared by both ingredients and burgers
   } = action
   // add increment/decrement ingredient
-  
+  // replace array specific ramda functions to object specific
+  // remove zero-count ingredients from burger (for viewing & storing)
   switch (type) {
     case CREATE_BURGER: {
       const burger = {
@@ -88,7 +89,7 @@ const burgerReducer = (state = initialState, action) => {
       }
 
       return {
-        ingredients: {...state.ingredients},
+        ingredients: { ...state.ingredients },
         burgers: {
           ...state.burgers,
           [burger.id]: burger,
@@ -97,25 +98,25 @@ const burgerReducer = (state = initialState, action) => {
     }
     case DELETE_BURGER:
       return {
-        ingredients: {...state.ingredients},
+        ingredients: { ...state.ingredients },
         burgers: omit(burgerId, state.burgers),
       }
-    case ADD_INGREDIENT_TO_BURGER: {
+    case INCREMENT_INGREDIENT_OF_BURGER: {
       const burger = state.burgers[burgerId]
-      const ingredients = append({count: amount, ingredientId}, burger.ingredients)
+      const ingredients = prepend({ count: amount, ingredientId }, burger.ingredients)
 
       return {
-        ingredients: {...state.ingredients},
-        burgers: update(burgerId, {...state.burgers[burgerId], ingredients}, state.burgers),
+        ingredients: { ...state.ingredients },
+        burgers: update(burgerId, { ...state.burgers[burgerId], ingredients }, state.burgers),
       }
-    }      
-    case REMOVE_INGREDIENT_FROM_BURGER: { 
+    }
+    case DECREMENT_INGREDIENT_OF_BURGER: {
       const burger = state.burgers[burgerId]
       const ingredients = reject(i => i.ingredientId === ingredientId, burger.ingredients)
 
       return {
-        ingredients: {...state.ingredients},
-        burgers: update(burgerId, {...burger, ingredients}, state.burgers),
+        ingredients: { ...state.ingredients },
+        burgers: update(burgerId, { ...burger, ingredients }, state.burgers),
       }
     }
     default:
@@ -124,5 +125,5 @@ const burgerReducer = (state = initialState, action) => {
 }
 
 export default combineReducers({
-  burger: burgerReducer
+  creation: burgerReducer
 })

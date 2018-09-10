@@ -3,19 +3,21 @@ import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { ContentContainer, ContentItems, CustomButton } from '../styled'
 
-const idk = ({ ingredient, amount, name, createIngredient, deleteIngredient }) => {
+const IngredientView = ({ id, count, name, price, incrementIngredient, decrementIngredient }) => {  
   return (
     <ContentContainer>
       <ContentItems>
         <CustomButton
           variant='fab'
-          onClick={() => deleteIngredient(ingredient, amount)}>
+          onClick={() => decrementIngredient(id)}
+        >
           <DeleteIcon />
         </CustomButton>
-        <p>{name}</p>
+        <p>{name}, price: ${price}, count: {count}</p>
         <CustomButton
           variant='fab'
-          onClick={() => createIngredient(ingredient, amount)}>
+          onClick={() => incrementIngredient(id)}
+        >
           <AddIcon />
         </CustomButton>
       </ContentItems>
@@ -23,4 +25,4 @@ const idk = ({ ingredient, amount, name, createIngredient, deleteIngredient }) =
   )
 }
 
-export default idk
+export default IngredientView

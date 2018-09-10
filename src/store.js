@@ -6,9 +6,10 @@ import sagas from './sagas'
 
 const sagaMiddleware = createSagaMiddleware()
 
-const composeSetup = process.env.NODE_ENV !== 'production' && typeof window === 'object' &&
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose
+const composeSetup = process.env.NODE_ENV !== 
+  'production' && typeof window === 'object' &&
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose
 
 export default createStore(
   rootReducer,

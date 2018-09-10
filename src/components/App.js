@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import Idk from './idk'
+import BurgerForm from './BurgerForm'
 import {
   CustomButton,
   Container,
@@ -19,56 +19,16 @@ class App extends Component {
     this.state = { burgerName: '' }
   }
 
-  handleBurgerName = e =>
-    this.setState({ burgerName: e.target.value })
-
-  handleCreateBurger = () => {
-    const { burgerName } = this.state
-    if (burgerName.length > 0) {
-      this.props.createBurger(burgerName)
-    }
-  }
-
   render() {
-    const { name, total } = this.props.burger
-    const { createIngredient, deleteIngredient } = this.props
+    const { burgerIds } = this.props
     return (
       <Container>
-        <BurgerNameInput onChange={this.handleBurgerName} />
-        <CustomButton onClick={this.handleCreateBurger}>
-          Create burger
-        </CustomButton>
-        {true &&
-          <Fragment>
-            <h1>{name}</h1>
-            <p>{total}</p>
-            <Idk
-              name='Meat'
-              ingredient='meat'
-              amount={5}
-              createIngredient={createIngredient}
-              deleteIngredient={deleteIngredient}
-            />
-            <Idk
-              name='Chesse'
-              ingredient='chesse'
-              amount={3}
-              createIngredient={createIngredient}
-              deleteIngredient={deleteIngredient}
-            />
-            <Idk
-              name='Salad'
-              ingredient='salad'
-              amount={2}
-              createIngredient={createIngredient}
-              deleteIngredient={deleteIngredient}
-            />
-          </Fragment>}
+        {burgerIds.map(id => <BurgerForm burgerId={id} />)}
       </Container>
     );
   }
 }
 
 export default connect(state => ({
-  burger: state.burger
-}), { createBurger, deleteBurger, createIngredient, deleteIngredient })(App)
+  burgerIds: Object.keys(state.creation.burgers)
+}), null)(App)
