@@ -36,17 +36,22 @@ class BurgerForm extends Component {
     const { incrementIngredient, decrementIngredient } = this.props
 
     const { ingredients } = this.props
-    const { id, name, ingredients: burgerIngredientsList } = this.props.burger
+    const { id, name, ingredients: burgerIngredients } = this.props.burger
     
-    const burgerIngredients = burgerIngredientsList.map(({count, ingredientId}) =>
-      ({count, ...ingredients[ingredientId]}))
-    const burgerPrice = burgerIngredients.reduce((sum, {count, price}) => sum + count * price, 0)
-
+    const burgerIngredientsList = Object.entries(burgerIngredients).reduce((list, [ingredientId, count]) => {
+      if (count instanceof Array)
+        return list
+      
+      return [...list, {count, ...ingredients[ingredientId]}]
+    }, [])
+    
+    const burgerPrice = burgerIngredientsList.reduce((sum, {count, price}) => sum + count * price, 0)
+    
     return (
       <Fragment>
         <BurgerNameInput onChange={this.handleBurgerName} />
         <h3>{name}</h3>
-        {burgerIngredients.map(ingredient =>
+        {burgerIngredientsList.map(ingredient =>
           <IngredientView
             key={ingredient.id}
             {...ingredient}

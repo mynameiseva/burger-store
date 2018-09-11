@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { reject, omit, prepend, update } from 'ramda'
+import { reject, omit, filter, prepend, assoc, lens, lensProp, prop, over } from 'ramda'
 import {
   CREATE_BURGER,
   DELETE_BURGER,
@@ -40,26 +40,29 @@ const burgersSample = {
   1: {
     id: 1,
     name: 'singlekoreshburg',
-    ingredients: [
-      { count: 3, ingredientId: 2 },
-      { count: 2, ingredientId: 3 },
-    ],
+    ingredients: {
+      2: 3, // ingredientId: count
+      3: 2,
+      ordering: [2, 3],
+    },
   },
   2: {
     id: 2,
     name: 'doublekoreshburg',
-    ingredients: [
-      { count: 2, ingredientId: 1 },
-      { count: 4, ingredientId: 3 },
-    ],
+    ingredients: {
+      1: 2,
+      3: 4,
+      ordering: [1, 3],
+    },
   },
   3: {
     id: 3,
     name: 'Tripple Beacon Koreshburg',
-    ingredients: [
-      { count: 3, ingredientId: 1 },
-      { count: 4, ingredientId: 3 },
-    ],
+    ingredients: {
+      1: 3,
+      3: 4,
+      ordering: [1, 3],
+    },
   },
 }
 
@@ -85,7 +88,7 @@ const burgerReducer = (state = initialState, action) => {
       const burger = {
         id: next_id(),
         name,
-        ingredients: [],
+        ingredients: { ordering: [] },
       }
 
       return {
@@ -103,20 +106,25 @@ const burgerReducer = (state = initialState, action) => {
       }
     case INCREMENT_INGREDIENT_OF_BURGER: {
       const burger = state.burgers[burgerId]
-      const ingredients = prepend({ count: amount, ingredientId }, burger.ingredients)
+      //todo::
+      const ingredientLens = lens(prop(ingredientId, { ingredientId: 0 }), assoc(ingredientId))
+      console.log(ingredientLens(burger.ingredients), 'APPLY LENS')
+      const ingredients = over(ingredientLens, count => count + 1, burger.ingredients)
 
       return {
         ingredients: { ...state.ingredients },
-        burgers: update(burgerId, { ...state.burgers[burgerId], ingredients }, state.burgers),
+        burgers: assoc(burgerId, { ...burger, ingredients }, state.burgers),
       }
     }
     case DECREMENT_INGREDIENT_OF_BURGER: {
       const burger = state.burgers[burgerId]
-      const ingredients = reject(i => i.ingredientId === ingredientId, burger.ingredients)
+
+      const ingredients = over(lensProp(burgerId), count => count - 1, burger.ingredients)
+      const filteredIngredients = filter(count => count <= 0, burger.ingredients)
 
       return {
         ingredients: { ...state.ingredients },
-        burgers: update(burgerId, { ...burger, ingredients }, state.burgers),
+        burgers: assoc(burgerId, { ...burger, ...filteredIngredients }, state.burgers),
       }
     }
     default:
