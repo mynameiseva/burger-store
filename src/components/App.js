@@ -1,17 +1,8 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { CustomButton, Container, BurgerNameInput } from '../styled'
+import { createBurger } from '../actions'
 import BurgerForm from './BurgerForm'
-import {
-  CustomButton,
-  Container,
-  BurgerNameInput
-} from '../styled'
-import {
-  createBurger,
-  deleteBurger,
-  createIngredient,
-  deleteIngredient
-} from '../actions'
 
 class App extends Component {
   constructor(props) {
@@ -19,11 +10,25 @@ class App extends Component {
     this.state = { burgerName: '' }
   }
 
+  handleBurgerName = e =>
+    this.setState({ burgerName: e.target.value })
+
+  handleCreateBurger = () => {
+    const { burgerName } = this.state
+    if (burgerName.length > 0) {
+      this.props.createBurger(burgerName)
+    }
+  }
+
   render() {
     const { burgerIds } = this.props
     return (
       <Container>
-        {burgerIds.map(id => <BurgerForm burgerId={id} />)}
+        <BurgerNameInput onChange={this.handleBurgerName}/>
+        <CustomButton onClick={this.handleCreateBurger}>
+          Create burger
+        </CustomButton>
+        {burgerIds.map(id => <BurgerForm key={id} burgerId={id} />)}
       </Container>
     );
   }
@@ -31,4 +36,4 @@ class App extends Component {
 
 export default connect(state => ({
   burgerIds: Object.keys(state.creation.burgers)
-}), null)(App)
+}), { createBurger })(App)

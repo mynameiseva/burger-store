@@ -28,7 +28,7 @@ export const CustomButton = styled(Button).attrs({
 export const BurgerNameInput = styled(TextField).attrs({
   required: true,
   margin: 'normal',
-  placeholder: 'Type burgers name'
+  placeholder: 'Type burger`s name'
 })``
 
 export const ContentContainer = styled.div`
